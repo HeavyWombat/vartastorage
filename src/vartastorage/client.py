@@ -49,14 +49,7 @@ class Client(object):
             out["apparent_power"] = self.get_apparent_power()
             out["error_code"] = self.get_error_code()
             out["total_charged_energy"] = self.get_total_charged_energy()
-            out["serial"] = self.get_serial()
-            
-            energytotals = self.get_energy_cgi()
-            out["EGrid_AC_DC"] = energytotals["EGrid_AC_DC"]
-            out["EGrid_DC_AC"] = energytotals["EGrid_DC_AC"]
-            out["EWr_AC_DC"] = energytotals["EWr_AC_DC"]
-            out["EWr_DC_AC"] = energytotals["EWr_DC_AC"]
-            out["Chrg_LoadCycles"] = energytotals["Chrg_LoadCycles"]
+            out["serial"] = 0
 
             return out
         except Exception as e:
@@ -183,60 +176,4 @@ class Client(object):
             raise ValueError("An error occured while polling the total charged energy. Please check your connection")
 
     def get_serial(self):
-        url = "http://" + self.modbus_host + "/cgi/ems_data.xml"
-        try:
-            response = requests.get(url, timeout=3)
-            if response.status_code == 200:
-                result = ET.fromstring(response.text)
-                result = result.get("id")
-        except Exception as e:
-            result = 0
-            raise ValueError("An error occured while polling the serial number. Please check your connection") 
-        return result
-
-    def get_energy_cgi(self):
-        #get energy totals and charge load cycles from CGI
-        url = "http://" + self.modbus_host + "/cgi/energy.js"
-        try:
-            response = requests.get(url, timeout=3)
-            if response.status_code == 200:
-                #asdasd
-                result = {
-                "EGrid_AC_DC": response.text.split(';\n')[0].split('= ')[1],
-                "EGrid_DC_AC": response.text.split(';\n')[1].split('= ')[1],
-                "EWr_AC_DC": response.text.split(';\n')[2].split('= ')[1],
-                "EWr_DC_AC": response.text.split(';\n')[3].split('= ')[1],
-                "Chrg_LoadCycles": response.text.split(';\n')[4].split('= ')[1].replace("]","").replace("[","")
-                }
-        except Exception as e:
-            result = {
-                "EGrid_AC_DC": 0,
-                "EGrid_DC_AC": 0,
-                "EWr_AC_DC": 0,
-                "EWr_DC_AC": 0,
-                "Chrg_LoadCycles": 0,
-                }
-            raise ValueError("An error occured while polling the energy totals. Please check your connection") 
-        return result
-
-    def get_service_cgi(self):
-        #get service and maintenance data from CGI
-        url = "http://" + self.modbus_host + "/cgi/user_serv.js"
-        try:
-            response = requests.get(url, timeout=3)
-            if response.status_code == 200:
-                #asdasd
-                result = {
-                "FilterZeit": response.text.split(';\n')[0].split('= ')[1],
-                "Fan": response.text.split(';\n')[1].split('= ')[1],
-                "Main": response.text.split(';\n')[2].split('= ')[1],
-                }
-        except Exception as e:
-            result = {
-                "FilterZeit": 0,
-                "Fan": 0,
-                "Main": 0,
-                }
-            raise ValueError("An error occured while polling the maintenance CGI. Please check your connection") 
-        return result
-    
+        return 0
